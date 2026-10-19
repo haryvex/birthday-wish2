@@ -140,8 +140,11 @@ function loop(now){if(!running)return;var t=(now-T0)/1000;ctx.clearRect(0,0,W,H)
 (function(){var START=34,a=document.getElementById("bgm"),b=document.getElementById("mute"),started=false;
 function seek(){try{a.currentTime=START}catch(e){}}
 a.addEventListener("loadedmetadata",seek);
-function start(){if(started)return;started=true;a.volume=.8;if(a.readyState>=1)seek();var p=a.play();if(p&&p.then)p.then(function(){if(a.currentTime<START-1)seek();b.style.display="block"}).catch(function(){})}
-document.addEventListener("pointerdown",start,{once:false});
+function start(){if(started)return;a.volume=.8;if(a.readyState>=1)seek();var p=a.play();if(p&&p.then)p.then(function(){started=true;if(a.currentTime<START-1)seek();b.style.display="block"}).catch(function(){})}
+/* mobile par gesture tab count hota hai jab ungli uthti hai (pointerup/touchend/click), pointerdown par nahi */
+document.addEventListener("pointerup",start);
+document.addEventListener("touchend",start,{passive:true});
+document.addEventListener("click",start);
 a.addEventListener("ended",function(){seek();a.play()});
 a.addEventListener("error",function(){b.style.display="none"});
 b.addEventListener("pointerdown",function(e){e.stopPropagation()});
